@@ -6,7 +6,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 
 
-async def start_and_reset(dut):
+async def start_and_reset(dut, cycles: int = 10):
     dut._log.info("Start")
 
     # Set the clock period to 10 us (100 KHz)
@@ -19,7 +19,7 @@ async def start_and_reset(dut):
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, cycles)
     dut.rst_n.value = 1
 
 @cocotb.test()
@@ -38,7 +38,7 @@ async def test_project(dut):
 @cocotb.test()
 async def test_or(dut):
     dut._log.info("Test OR logic behavior")
-    await start_and_reset(dut)
+    await start_and_reset(dut, 2)
 
     ## Test pg0 OR A=0, B=0
     dut._log.info("Testing OR A=0, B=0")
@@ -71,7 +71,7 @@ async def test_or(dut):
     assert dut.uo_out.value & 0b11 == 0b01
 
 @cocotb.test()
-async def test_and(dut):
+async def test_and(dut, 2):
     dut._log.info("Test AND logic behavior")
     await start_and_reset(dut)
     
