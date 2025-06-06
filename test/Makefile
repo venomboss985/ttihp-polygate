@@ -5,7 +5,7 @@
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = polygate.v
+PROJECT_SOURCES = polygate.v project.v
 
 ifneq ($(GATES),yes)
 
