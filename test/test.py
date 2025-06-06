@@ -6,8 +6,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 
 
-@cocotb.test()
-async def test_project(dut):
+async def start_and_reset(dut):
     dut._log.info("Start")
 
     # Set the clock period to 10 us (100 KHz)
@@ -23,18 +22,85 @@ async def test_project(dut):
     await ClockCycles(dut.clk, 10)
     dut.rst_n.value = 1
 
-    dut._log.info("Test project behavior")
+@cocotb.test()
+async def test_project(dut):
+    await start_and_reset(dut)
+
+    dut._log.info("Test default behavior")
 
     # Set the input values you want to test
-    dut.ui_in.value = 20
-    dut.uio_in.value = 30
-
+    dut.ui_in.value = 0b00000000
     # Wait for one clock cycle to see the output values
     await ClockCycles(dut.clk, 1)
+    # Test the expected output
+    assert dut.uo_out.value == 0b1010
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    assert dut.uo_out.value == 50
+@cocotb.test()
+async def test_or(dut):
+    dut._log.info("Test OR logic behavior")
+    await start_and_reset(dut)
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+    ## Test pg0 OR A=0, B=0
+    dut._log.info("Testing OR A=0, B=0")
+    dut.ui_in.value = 0b0000
+    await ClockCycles(dut.clk, 1)
+    assert dut.uo_out.value & 0b11 == 0b10
+
+    ## Test pg0 OR A=1, B=0
+    dut._log.info("Testing OR A=1, B=0")
+    dut.ui_in.value = 0b0100
+    await ClockCycles(dut.clk, 1)
+    assert dut.uo_out.value & 0b11 == 0b01
+
+    ## Test pg0 OR A=0, B=1
+    dut._log.info("Testing OR A=0, B=1")
+    dut.ui_in.value = 0b1000
+    await ClockCycles(dut.clk, 1)
+    assert dut.uo_out.value & 0b11 == 0b01
+
+    ## Test pg0 OR A=1, B=1
+    dut._log.info("Testing OR A=1, B=1")
+    dut.ui_in.value = 0b1100
+    await ClockCycles(dut.clk, 1)
+    assert dut.uo_out.value & 0b11 == 0b01
+
+    ## Test pg0 OR INV A=0, B=0
+    dut._log.info("Testing OR INV A=0, B=0")
+    dut.ui_in.value = 0b0010
+    await ClockCycles(dut.clk, 1)
+    assert dut.uo_out.value & 0b11 == 0b01
+
+@cocotb.test()
+async def test_and(dut):
+    dut._log.info("Test AND logic behavior")
+    await start_and_reset(dut)
+    
+    ## Test pg0 AND A=0, B=0
+    dut._log.info("Testing AND A=0, B=0")
+    dut.ui_in.value = 0b0001
+    await ClockCycles(dut.clk, 1)
+    assert dut.uo_out.value & 0b11 == 0b10
+
+    ## Test pg0 AND A=1, B=0
+    dut._log.info("Testing AND A=1, B=0")
+    dut.ui_in.value = 0b0101
+    await ClockCycles(dut.clk, 1)
+    assert dut.uo_out.value & 0b11 == 0b10
+
+    ## Test pg0 AND A=0, B=1
+    dut._log.info("Testing AND A=0, B=1")
+    dut.ui_in.value = 0b1001
+    await ClockCycles(dut.clk, 1)
+    assert dut.uo_out.value & 0b11 == 0b10
+
+    ## Test pg0 AND A=1, B=1
+    dut._log.info("Testing AND A=1, B=1")
+    dut.ui_in.value = 0b1101
+    await ClockCycles(dut.clk, 1)
+    assert dut.uo_out.value & 0b11 == 0b01
+
+    ## Test pg0 AND INV A=0, B=0
+    dut._log.info("Testing AND INV A=0, B=0")
+    dut.ui_in.value = 0b0011
+    await ClockCycles(dut.clk, 1)
+    assert dut.uo_out.value & 0b11 == 0b01

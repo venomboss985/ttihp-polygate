@@ -4,6 +4,7 @@
  */
 
 `default_nettype none
+`timescale 1ns / 1ps
 
 /*
     INPUT
@@ -20,14 +21,13 @@
 */
 
 module polygate (
-  input  wire       clk_in,
   input  wire [3:0] in,
   output reg  [1:0] out
 );
 
   reg [3:0] in_buf;
 
-  always @(posedge clk_in) begin
+  always @(*) begin
     // Reset input buffer
     in_buf = 4'b0;
 
@@ -65,13 +65,11 @@ module tt_um_polygate (
 );
 
   polygate pg0 (
-    .clk_in (clk),
     .in (ui_in[3:0]),
     .out (uo_out[1:0])
   );
 
   polygate pg1 (
-    .clk_in (clk),
     .in (ui_in[7:4]),
     .out (uo_out[3:2])
   );
