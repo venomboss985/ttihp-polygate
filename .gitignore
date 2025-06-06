@@ -10,5 +10,5 @@ test/__pycache__/
 test/results.xml
 test/gate_level_netlist.v
 ttsetup
-*render.svg
-*render.png
+*.svg
+*.png
