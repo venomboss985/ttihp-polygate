@@ -71,9 +71,9 @@ async def test_or(dut):
     assert dut.uo_out.value & 0b11 == 0b01
 
 @cocotb.test()
-async def test_and(dut, 2):
+async def test_and(dut):
     dut._log.info("Test AND logic behavior")
-    await start_and_reset(dut)
+    await start_and_reset(dut, 2)
     
     ## Test pg0 AND A=0, B=0
     dut._log.info("Testing AND A=0, B=0")
